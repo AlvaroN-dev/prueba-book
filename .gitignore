@@ -1,3 +1,4 @@
 application.propertiestarget/
 target/
 src/main/resources/application.properties
+target/
