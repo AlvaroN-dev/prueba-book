@@ -127,6 +127,11 @@ public class UserDashboardController {
             idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
             idColumn.setPrefWidth(50);
             
+            // ISBN Column
+            TableColumn<BookTableModel, String> isbnColumn = new TableColumn<>("ISBN");
+            isbnColumn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
+            isbnColumn.setPrefWidth(150);
+            
             // Title Column
             TableColumn<BookTableModel, String> titleColumn = new TableColumn<>("Title");
             titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
@@ -137,17 +142,13 @@ public class UserDashboardController {
             authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
             authorColumn.setPrefWidth(200);
             
-            // ISBN Column
-            TableColumn<BookTableModel, String> isbnColumn = new TableColumn<>("ISBN");
-            isbnColumn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
-            isbnColumn.setPrefWidth(150);
-            
-            // Stock Column
+            // Available Copies Column
             TableColumn<BookTableModel, Integer> stockColumn = new TableColumn<>("Available");
             stockColumn.setCellValueFactory(new PropertyValueFactory<>("availableCopies"));
             stockColumn.setPrefWidth(100);
             
-            catalogTable.getColumns().addAll(idColumn, titleColumn, authorColumn, isbnColumn, stockColumn);
+            // Add columns in the correct order: ID, ISBN, Title, Author, Available
+            catalogTable.getColumns().addAll(idColumn, isbnColumn, titleColumn, authorColumn, stockColumn);
             catalogTable.setItems(booksList);
             
             // Add selection listener to show book details

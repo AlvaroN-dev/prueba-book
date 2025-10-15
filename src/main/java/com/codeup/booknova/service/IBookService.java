@@ -149,10 +149,29 @@ public interface IBookService {
     void removeBook(Integer bookId) throws DatabaseException;
     
     /**
+     * Deletes a book from the library catalog.
+     * This is an alias for {@link #removeBook(Integer)}.
+     * 
+     * @param bookId the ID of the book to delete
+     * @throws DatabaseException if deletion fails or book has active loans
+     */
+    default void deleteBook(Integer bookId) throws DatabaseException {
+        removeBook(bookId);
+    }
+    
+    /**
      * Gets the current stock level for a book.
      * 
      * @param bookId the ID of the book
      * @return the current stock quantity, or 0 if book not found
      */
     Integer getBookStock(Integer bookId);
+    
+    /**
+     * Exports the book catalog to a CSV file.
+     * 
+     * @param filePath the path to the CSV file to generate
+     * @throws java.io.IOException if an error occurs while writing the file
+     */
+    void exportBooksToCSV(String filePath) throws java.io.IOException;
 }

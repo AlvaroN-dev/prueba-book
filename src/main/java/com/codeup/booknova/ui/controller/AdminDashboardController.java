@@ -92,27 +92,33 @@ public class AdminDashboardController {
         if (booksTable != null) {
             booksTable.getColumns().clear();
             
+            // ID Column
             TableColumn<BookTableModel, Integer> idCol = new TableColumn<>("ID");
             idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
             idCol.setPrefWidth(50);
             
-            TableColumn<BookTableModel, String> titleCol = new TableColumn<>("Title");
-            titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
-            titleCol.setPrefWidth(250);
-            
-            TableColumn<BookTableModel, String> authorCol = new TableColumn<>("Author");
-            authorCol.setCellValueFactory(new PropertyValueFactory<>("author"));
-            authorCol.setPrefWidth(200);
-            
+            // ISBN Column
             TableColumn<BookTableModel, String> isbnCol = new TableColumn<>("ISBN");
             isbnCol.setCellValueFactory(new PropertyValueFactory<>("isbn"));
             isbnCol.setPrefWidth(150);
             
+            // Title Column
+            TableColumn<BookTableModel, String> titleCol = new TableColumn<>("Title");
+            titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
+            titleCol.setPrefWidth(250);
+            
+            // Author Column
+            TableColumn<BookTableModel, String> authorCol = new TableColumn<>("Author");
+            authorCol.setCellValueFactory(new PropertyValueFactory<>("author"));
+            authorCol.setPrefWidth(200);
+            
+            // Available Copies Column
             TableColumn<BookTableModel, Integer> availableCol = new TableColumn<>("Available Copies");
             availableCol.setCellValueFactory(new PropertyValueFactory<>("availableCopies"));
             availableCol.setPrefWidth(120);
             
-            booksTable.getColumns().addAll(idCol, titleCol, authorCol, isbnCol, availableCol);
+            // Add columns in the correct order: ID, ISBN, Title, Author, Available Copies
+            booksTable.getColumns().addAll(idCol, isbnCol, titleCol, authorCol, availableCol);
             booksTable.setItems(booksList);
         }
     }
@@ -387,15 +393,34 @@ public class AdminDashboardController {
         }
     }
     
+    /**
+     * Handles the add book button action.
+     * Opens a dialog to create a new book and displays the created book details.
+     */
     @FXML
     private void handleAddBook() {
         try {
             BookDialog dialog = new BookDialog();
             dialog.showAndWait().ifPresent(book -> {
                 try {
-                    serviceManager.getBookService().addBook(
+                    // Create the book and get the returned book with ID
+                    Book createdBook = serviceManager.getBookService().addBook(
                         book.getIsbn(), book.getTitle(), book.getAuthor(), book.getStock());
-                    showAlert("Success", "Book successfully created");
+                    
+                    // Show success message with book details
+                    Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                    successAlert.setTitle("Success");
+                    successAlert.setHeaderText("Book Successfully Created");
+                    successAlert.setContentText(
+                        "The book has been added to the catalog:\n\n" +
+                        "ID: " + createdBook.getId() + "\n" +
+                        "ISBN: " + createdBook.getIsbn() + "\n" +
+                        "Title: " + createdBook.getTitle() + "\n" +
+                        "Author: " + createdBook.getAuthor() + "\n" +
+                        "Stock: " + createdBook.getStock() + " copies"
+                    );
+                    successAlert.showAndWait();
+                    
                     loadBooks(); // Refresh table
                 } catch (Exception e) {
                     showAlert("Error", "Error creating book: " + e.getMessage());
@@ -404,6 +429,94 @@ public class AdminDashboardController {
         } catch (Exception e) {
             showAlert("Error", "Error opening dialog: " + e.getMessage());
         }
+    }
+    
+    /**
+     * Handles the edit book button action.
+     * Opens a dialog to edit the selected book's details.
+     */
+    @FXML
+    private void handleEditBook() {
+        BookTableModel selectedBook = booksTable.getSelectionModel().getSelectedItem();
+        
+        if (selectedBook == null) {
+            showAlert("Warning", "Please select a book to edit");
+            return;
+        }
+        
+        try {
+            // Get full book from service
+            Book book = serviceManager.getBookService()
+                .findBookById(selectedBook.getId())
+                .orElse(null);
+            
+            if (book == null) {
+                showAlert("Error", "Book not found");
+                return;
+            }
+            
+            // Open edit dialog
+            EditBookDialog dialog = new EditBookDialog(book);
+            dialog.showAndWait().ifPresent(updatedBook -> {
+                try {
+                    serviceManager.getBookService().updateBook(updatedBook);
+                    showAlert("Success", "Book successfully updated");
+                    loadBooks(); // Refresh table
+                } catch (Exception e) {
+                    showAlert("Error", "Error updating book: " + e.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            showAlert("Error", "Error opening edit dialog: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Handles the delete book button action.
+     * Confirms and deletes the selected book from the database.
+     */
+    @FXML
+    private void handleDeleteBook() {
+        BookTableModel selectedBook = booksTable.getSelectionModel().getSelectedItem();
+        
+        if (selectedBook == null) {
+            showAlert("Warning", "Please select a book to delete");
+            return;
+        }
+        
+        // Confirmation dialog
+        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDialog.setTitle("Confirm Deletion");
+        confirmDialog.setHeaderText("Delete Book");
+        confirmDialog.setContentText(
+            "Are you sure you want to delete this book?\n\n" +
+            "Title: " + selectedBook.getTitle() + "\n" +
+            "Author: " + selectedBook.getAuthor() + "\n" +
+            "ISBN: " + selectedBook.getIsbn() + "\n\n" +
+            "This action cannot be undone."
+        );
+        
+        confirmDialog.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try {
+                    serviceManager.getBookService().deleteBook(selectedBook.getId());
+                    showAlert("Success", "Book successfully deleted");
+                    loadBooks(); // Refresh table
+                } catch (Exception e) {
+                    showAlert("Error", "Error deleting book: " + e.getMessage());
+                }
+            }
+        });
+    }
+    
+    /**
+     * Handles the refresh books button action.
+     * Reloads all books from the database.
+     */
+    @FXML
+    private void handleRefreshBooks() {
+        loadBooks();
+        showAlert("Success", "Books table refreshed");
     }
     
     @FXML

@@ -34,23 +34,41 @@ public class MemberDashboardController {
         loadData();
     }
     
+    /**
+     * Sets up the available books table with appropriate columns.
+     * Columns are displayed in order: ID, ISBN, Title, Author, Available
+     */
     private void setupAvailableBooksTable() {
         if (availableBooksTable != null) {
             availableBooksTable.getColumns().clear();
             
-            TableColumn<BookTableModel, String> titleCol = new TableColumn<>("Título");
+            // ID Column
+            TableColumn<BookTableModel, Integer> idCol = new TableColumn<>("ID");
+            idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+            idCol.setPrefWidth(50);
+            
+            // ISBN Column
+            TableColumn<BookTableModel, String> isbnCol = new TableColumn<>("ISBN");
+            isbnCol.setCellValueFactory(new PropertyValueFactory<>("isbn"));
+            isbnCol.setPrefWidth(130);
+            
+            // Title Column
+            TableColumn<BookTableModel, String> titleCol = new TableColumn<>("Title");
             titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
             titleCol.setPrefWidth(200);
             
-            TableColumn<BookTableModel, String> authorCol = new TableColumn<>("Autor");
+            // Author Column
+            TableColumn<BookTableModel, String> authorCol = new TableColumn<>("Author");
             authorCol.setCellValueFactory(new PropertyValueFactory<>("author"));
             authorCol.setPrefWidth(150);
             
-            TableColumn<BookTableModel, Integer> stockCol = new TableColumn<>("Stock");
+            // Available Copies Column
+            TableColumn<BookTableModel, Integer> stockCol = new TableColumn<>("Available");
             stockCol.setCellValueFactory(new PropertyValueFactory<>("availableCopies"));
             stockCol.setPrefWidth(80);
             
-            availableBooksTable.getColumns().addAll(titleCol, authorCol, stockCol);
+            // Add columns in the correct order: ID, ISBN, Title, Author, Available
+            availableBooksTable.getColumns().addAll(idCol, isbnCol, titleCol, authorCol, stockCol);
             availableBooksTable.setItems(availableBooksList);
         }
     }

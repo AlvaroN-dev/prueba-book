@@ -69,8 +69,11 @@
                                  </font>
                               </Label>
                               <Region HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" onAction="#handleAddBook" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Add Book" />
-                              <Button mnemonicParsing="false" onAction="#handleExportBooksCSV" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Export Catalog CSV" />
+                              <Button mnemonicParsing="false" onAction="#handleAddBook" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Add Book" />
+                              <Button mnemonicParsing="false" onAction="#handleEditBook" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Edit Book" />
+                              <Button mnemonicParsing="false" onAction="#handleDeleteBook" style="-fx-background-color: #F44336; -fx-text-fill: white;" text="Delete Book" />
+                              <Button mnemonicParsing="false" onAction="#handleRefreshBooks" style="-fx-background-color: #FF9800; -fx-text-fill: white;" text="Refresh" />
+                              <Button mnemonicParsing="false" onAction="#handleExportBooksCSV" style="-fx-background-color: #9C27B0; -fx-text-fill: white;" text="Export CSV" />
                            </children>
                         </HBox>
                         <TableView fx:id="booksTable" prefHeight="400.0" />
