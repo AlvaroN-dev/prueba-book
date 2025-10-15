@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.codeup.booknova.ui.controller.AdminDashboardController">
+   <top>
+      <VBox style="-fx-background-color: #2196F3;">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label text="NovaBook - Panel de Administrador" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #FF5722; -fx-text-fill: white;" text="Cerrar Sesión" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+
+   <center>
+      <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE">
+         <tabs>
+            <Tab text="Usuarios">
+               <content>
+                  <VBox spacing="10.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Label text="Gestión de Usuarios">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </Label>
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Button mnemonicParsing="false" onAction="#handleAddUser" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Agregar Usuario" />
+                           </children>
+                        </HBox>
+                        <TableView fx:id="usersTable" prefHeight="400.0" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+
+            <Tab text="Libros">
+               <content>
+                  <VBox spacing="10.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Label text="Gestión de Libros">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </Label>
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Button mnemonicParsing="false" onAction="#handleAddBook" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Agregar Libro" />
+                              <Button mnemonicParsing="false" onAction="#handleExportBooksCSV" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Exportar Catálogo CSV" />
+                           </children>
+                        </HBox>
+                        <TableView fx:id="booksTable" prefHeight="400.0" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+
+            <Tab text="Préstamos">
+               <content>
+                  <VBox spacing="10.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Label text="Gestión de Préstamos">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </Label>
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Button mnemonicParsing="false" onAction="#handleManageLoans" style="-fx-background-color: #FF9800; -fx-text-fill: white;" text="Gestionar Préstamos" />
+                              <Button mnemonicParsing="false" onAction="#handleExportOverdueLoansCSV" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Exportar Préstamos Vencidos CSV" />
+                           </children>
+                        </HBox>
+                        <TableView fx:id="loansTable" prefHeight="400.0" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+
+            <Tab text="Reportes">
+               <content>
+                  <VBox alignment="CENTER" spacing="20.0">
+                     <children>
+                        <Label text="Reportes y Estadísticas">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <Label text="📊 Dashboard de Estadísticas" />
+                        <Label text="📈 Reportes de Actividad" />
+                        <Label text="📋 Informes de Préstamos" />
+                        <Label text="(Funcionalidades a implementar)" style="-fx-text-fill: #666666;" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+   </center>
+</BorderPane>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.codeup.booknova.ui.controller.LoginController">
+   <children>
+      <Label text="NovaBook" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <Label text="Sistema de Gestión de Biblioteca" textAlignment="CENTER">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      
+      <VBox alignment="CENTER" spacing="15.0" style="-fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 10; -fx-background-radius: 10;">
+         <children>
+            <Label text="Iniciar Sesión">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Label>
+            
+            <TextField fx:id="usernameField" promptText="Usuario / Email" prefWidth="250.0" />
+            <PasswordField fx:id="passwordField" promptText="Contraseña" prefWidth="250.0" />
+            
+            <HBox alignment="CENTER" spacing="10.0">
+               <children>
+                  <Button fx:id="loginButton" mnemonicParsing="false" onAction="#handleLogin" prefWidth="120.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Ingresar">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="registerButton" mnemonicParsing="false" onAction="#handleRegister" prefWidth="120.0" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Registrarse">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
+            
+            <Label fx:id="messageLabel" textAlignment="CENTER" wrapText="true" />
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+      
+      <VBox alignment="CENTER" spacing="5.0">
+         <children>
+            <Label text="Usuarios de prueba:" style="-fx-font-weight: bold;" />
+            <Label text="Admin: admin / admin123" />
+            <Label text="Miembro: member / member123" />
+            <Label text="Usuario: user / user123" />
+         </children>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>
