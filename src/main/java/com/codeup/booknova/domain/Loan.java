@@ -54,10 +54,10 @@ public class Loan {
         }
         if (bookId == null) {
             throw new IllegalArgumentException("Book ID cannot be null");
-        }
+        }    // fecha de prestamo
         if (dateLoaned == null) {
             throw new IllegalArgumentException("Date loaned cannot be null");
-        }
+        }   // fecha de vencimiento
         if (dateDue == null) {
             throw new IllegalArgumentException("Date due cannot be null");
         }
@@ -69,7 +69,7 @@ public class Loan {
         this.bookId = bookId;
         this.dateLoaned = dateLoaned;
         this.dateDue = dateDue;
-        this.returned = false;
+        this.returned = false; // regreso
     }
 
     /**
@@ -102,12 +102,14 @@ public class Loan {
     public void markAsReturned() {
         this.returned = true;
     }
+                // marcar como devuelto
+
 
     /**
      * Gets the number of days until due date (negative if overdue).
      * @return days until due date, negative if overdue
      */
-    public long getDaysUntilDue() {
+    public long getDaysUntilDue() { // obtener los dias hasta vencer
         if (dateDue == null) {
             return 0;
         }

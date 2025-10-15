@@ -73,6 +73,14 @@ public interface IMemberService {
     Optional<Member> findMemberById(Integer id);
     
     /**
+     * Finds a member by their user ID.
+     * 
+     * @param userId the user ID
+     * @return an Optional containing the member if found
+     */
+    Optional<Member> findMemberByUserId(Integer userId);
+    
+    /**
      * Searches for members by name (partial match, case-insensitive).
      * 
      * @param name the name to search for

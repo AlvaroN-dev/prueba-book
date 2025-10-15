@@ -25,6 +25,7 @@ import java.time.Instant;
  */
 public class Member {
     private Integer id;
+    private Integer userId;
     private String name;
     private Boolean active;
     private Boolean deleted;
@@ -78,7 +79,7 @@ public class Member {
     public boolean canBorrow() {
         return active != null && active && (deleted == null || !deleted);
     }
-
+                    // puede pedir prestado
     /**
      * Gets the unique identifier of the member.
      * @return the member ID
@@ -93,6 +94,22 @@ public class Member {
      */
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    /**
+     * Gets the user ID associated with this member.
+     * @return the user ID
+     */
+    public Integer getUserId() {
+        return userId;
+    }
+
+    /**
+     * Sets the user ID associated with this member.
+     * @param userId the user ID
+     */
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     /**

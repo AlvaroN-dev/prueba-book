@@ -11,13 +11,13 @@
          <children>
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
-                  <Label text="NovaBook - Panel de Administrador" textFill="WHITE">
+                  <Label text="NovaBook - Administrator Dashboard" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
                   <Region HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #FF5722; -fx-text-fill: white;" text="Cerrar Sesión" />
+                  <Button mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #FF5722; -fx-text-fill: white;" text="Logout" />
                </children>
                <padding>
                   <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
@@ -30,19 +30,22 @@
    <center>
       <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE">
          <tabs>
-            <Tab text="Usuarios">
+            <Tab text="Users">
                <content>
                   <VBox spacing="10.0">
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
-                              <Label text="Gestión de Usuarios">
+                              <Label text="User Management">
                                  <font>
                                     <Font name="System Bold" size="16.0" />
                                  </font>
                               </Label>
                               <Region HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" onAction="#handleAddUser" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Agregar Usuario" />
+                              <Button mnemonicParsing="false" onAction="#handleAddUser" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Add User" />
+                              <Button mnemonicParsing="false" onAction="#handleEditUser" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Edit User" />
+                              <Button mnemonicParsing="false" onAction="#handleDeleteUser" style="-fx-background-color: #F44336; -fx-text-fill: white;" text="Delete User" />
+                              <Button mnemonicParsing="false" onAction="#handleToggleUserStatus" style="-fx-background-color: #FF9800; -fx-text-fill: white;" text="Activate/Deactivate" />
                            </children>
                         </HBox>
                         <TableView fx:id="usersTable" prefHeight="400.0" />
@@ -54,20 +57,20 @@
                </content>
             </Tab>
 
-            <Tab text="Libros">
+            <Tab text="Books">
                <content>
                   <VBox spacing="10.0">
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
-                              <Label text="Gestión de Libros">
+                              <Label text="Book Management">
                                  <font>
                                     <Font name="System Bold" size="16.0" />
                                  </font>
                               </Label>
                               <Region HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" onAction="#handleAddBook" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Agregar Libro" />
-                              <Button mnemonicParsing="false" onAction="#handleExportBooksCSV" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Exportar Catálogo CSV" />
+                              <Button mnemonicParsing="false" onAction="#handleAddBook" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Add Book" />
+                              <Button mnemonicParsing="false" onAction="#handleExportBooksCSV" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Export Catalog CSV" />
                            </children>
                         </HBox>
                         <TableView fx:id="booksTable" prefHeight="400.0" />
@@ -79,20 +82,20 @@
                </content>
             </Tab>
 
-            <Tab text="Préstamos">
+            <Tab text="Loans">
                <content>
                   <VBox spacing="10.0">
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
-                              <Label text="Gestión de Préstamos">
+                              <Label text="Loan Management">
                                  <font>
                                     <Font name="System Bold" size="16.0" />
                                  </font>
                               </Label>
                               <Region HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" onAction="#handleManageLoans" style="-fx-background-color: #FF9800; -fx-text-fill: white;" text="Gestionar Préstamos" />
-                              <Button mnemonicParsing="false" onAction="#handleExportOverdueLoansCSV" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Exportar Préstamos Vencidos CSV" />
+                              <Button mnemonicParsing="false" onAction="#handleManageLoans" style="-fx-background-color: #FF9800; -fx-text-fill: white;" text="Manage Loans" />
+                              <Button mnemonicParsing="false" onAction="#handleExportOverdueLoansCSV" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Export Overdue Loans CSV" />
                            </children>
                         </HBox>
                         <TableView fx:id="loansTable" prefHeight="400.0" />
@@ -104,19 +107,45 @@
                </content>
             </Tab>
 
-            <Tab text="Reportes">
+            <Tab text="Membership Requests">
+               <content>
+                  <VBox spacing="10.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Label text="Pending Membership Requests">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </Label>
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Button mnemonicParsing="false" onAction="#handleApproveMembershipRequest" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Approve Request" />
+                              <Button mnemonicParsing="false" onAction="#handleRejectMembershipRequest" style="-fx-background-color: #F44336; -fx-text-fill: white;" text="Reject Request" />
+                              <Button mnemonicParsing="false" onAction="#handleRefreshMembershipRequests" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Refresh" />
+                           </children>
+                        </HBox>
+                        <TableView fx:id="membershipRequestsTable" prefHeight="400.0" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+
+            <Tab text="Reports">
                <content>
                   <VBox alignment="CENTER" spacing="20.0">
                      <children>
-                        <Label text="Reportes y Estadísticas">
+                        <Label text="Reports and Statistics">
                            <font>
                               <Font name="System Bold" size="16.0" />
                            </font>
                         </Label>
-                        <Label text="📊 Dashboard de Estadísticas" />
-                        <Label text="📈 Reportes de Actividad" />
-                        <Label text="📋 Informes de Préstamos" />
-                        <Label text="(Funcionalidades a implementar)" style="-fx-text-fill: #666666;" />
+                        <Label text="📊 Statistics Dashboard" />
+                        <Label text="📈 Activity Reports" />
+                        <Label text="📋 Loan Reports" />
+                        <Label text="(Features to be implemented)" style="-fx-text-fill: #666666;" />
                      </children>
                      <padding>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />

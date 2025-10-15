@@ -11,13 +11,13 @@
          <children>
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
-                  <Label text="NovaBook - Panel de Miembro" textFill="WHITE">
+                  <Label text="NovaBook - Member Dashboard" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
                   <Region HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #FF5722; -fx-text-fill: white;" text="Cerrar Sesión" />
+                  <Button mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #FF5722; -fx-text-fill: white;" text="Logout" />
                </children>
                <padding>
                   <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
@@ -33,7 +33,7 @@
             <!-- Left Panel - Available Books -->
             <VBox spacing="10.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Label text="Libros Disponibles">
+                  <Label text="Available Books">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
@@ -41,8 +41,8 @@
                   
                   <HBox spacing="10.0">
                      <children>
-                        <TextField fx:id="searchField" promptText="Buscar libros..." HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" onAction="#handleSearch" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Buscar" />
+                        <TextField fx:id="searchField" promptText="Search books..." HBox.hgrow="ALWAYS" />
+                        <Button mnemonicParsing="false" onAction="#handleSearch" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Search" />
                      </children>
                   </HBox>
                   
@@ -50,7 +50,7 @@
                   
                   <HBox alignment="CENTER" spacing="10.0">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#handleBorrowBook" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Solicitar Préstamo" />
+                        <Button mnemonicParsing="false" onAction="#handleBorrowBook" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Borrow Book" />
                      </children>
                   </HBox>
                </children>
@@ -59,7 +59,7 @@
             <!-- Right Panel - My Loans -->
             <VBox spacing="10.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Label text="Mis Préstamos">
+                  <Label text="My Loans">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
@@ -69,8 +69,8 @@
                   
                   <HBox alignment="CENTER" spacing="10.0">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#handleReturnBook" style="-fx-background-color: #FF9800; -fx-text-fill: white;" text="Devolver Libro" />
-                        <Button mnemonicParsing="false" onAction="#handleRenewLoan" style="-fx-background-color: #9C27B0; -fx-text-fill: white;" text="Renovar Préstamo" />
+                        <Button mnemonicParsing="false" onAction="#handleReturnBook" style="-fx-background-color: #FF9800; -fx-text-fill: white;" text="Return Book" />
+                        <Button mnemonicParsing="false" onAction="#handleRenewLoan" style="-fx-background-color: #9C27B0; -fx-text-fill: white;" text="Renew Loan" />
                      </children>
                   </HBox>
                </children>
@@ -87,9 +87,9 @@
          <children>
             <HBox alignment="CENTER" spacing="20.0">
                <children>
-                  <Label text="📚 Límite de préstamos: 3 libros" />
-                  <Label text="📅 Duración máxima: 15 días" />
-                  <Label text="🔄 Renovaciones: 1 por libro" />
+                  <Label text="📚 Loan limit: 3 books" />
+                  <Label text="📅 Maximum duration: 15 days" />
+                  <Label text="🔄 Renewals: 1 per book" />
                </children>
                <padding>
                   <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />

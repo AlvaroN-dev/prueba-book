@@ -18,6 +18,7 @@ public class ServiceManager {
     private final BookService bookService;
     private final MemberService memberService;
     private final LoanService loanService;
+    private final MembershipRequestService membershipRequestService;
     
     private ServiceManager() {
         // Initialize configuration and connection
@@ -30,12 +31,14 @@ public class ServiceManager {
         BookJdbcRepository bookRepo = new BookJdbcRepository(jdbcTemplate);
         MemberJdbcRepository memberRepo = new MemberJdbcRepository(jdbcTemplate);
         LoanJdbcRepository loanRepo = new LoanJdbcRepository(jdbcTemplate);
+        MembershipRequestJdbcRepository requestRepo = new MembershipRequestJdbcRepository(jdbcTemplate);
         
         // Initialize services
         this.userService = new UserService(userRepo);
         this.bookService = new BookService(bookRepo);
         this.memberService = new MemberService(memberRepo);
         this.loanService = new LoanService(loanRepo, bookRepo, memberRepo);
+        this.membershipRequestService = new MembershipRequestService(requestRepo, memberRepo);
     }
     
     public static ServiceManager getInstance() {
@@ -63,6 +66,10 @@ public class ServiceManager {
     
     public LoanService getLoanService() {
         return loanService;
+    }
+    
+    public MembershipRequestService getMembershipRequestService() {
+        return membershipRequestService;
     }
     
     public JdbcTemplateLight getJdbcTemplate() {

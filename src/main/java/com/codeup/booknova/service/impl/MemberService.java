@@ -12,6 +12,7 @@ import com.codeup.booknova.domain.Member;
 import com.codeup.booknova.domain.MemberRole;
 import com.codeup.booknova.exception.DatabaseException;
 import com.codeup.booknova.repository.IMemberRepository;
+import com.codeup.booknova.repository.impl.MemberJdbcRepository;
 import com.codeup.booknova.service.IMemberService;
 import com.codeup.booknova.util.ValidationUtils;
 
@@ -98,6 +99,14 @@ public class MemberService implements IMemberService {
             return Optional.empty();
         }
         return repo.findById(id);
+    }
+
+    @Override
+    public Optional<Member> findMemberByUserId(Integer userId) {
+        if (userId == null || userId <= 0) {
+            return Optional.empty();
+        }
+        return ((MemberJdbcRepository) repo).findByUserId(userId);
     }
 
     @Override

@@ -68,7 +68,7 @@ public class JdbcTemplateLight {
      */
     public JdbcTemplateLight(ConnectionFactory factory) { 
         if (factory == null) {
-            throw new IllegalArgumentException("ConnectionFactory cannot be null");
+            throw new IllegalArgumentException("ConnectionFactory cannot be null"); // ConnectionFactory no puede ser nula
         }
         this.factory = factory; 
     }

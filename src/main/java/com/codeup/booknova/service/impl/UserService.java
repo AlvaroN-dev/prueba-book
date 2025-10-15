@@ -104,6 +104,20 @@ public class UserService implements IUserService {
         if (user == null || user.getId() == null) {
             throw new DatabaseException("User and user ID cannot be null");
         }
+        
+        // Validate user data
+        ValidationUtils.validateName(user.getName());
+        ValidationUtils.validateEmail(user.getEmail());
+        ValidationUtils.validatePhone(user.getPhone());
+        
+        // Check if we need to hash a new password
+        // If password doesn't start with $2a$ (BCrypt prefix), it's a new plain password
+        if (user.getPassword() != null && !user.getPassword().startsWith("$2a$")) {
+            ValidationUtils.validatePassword(user.getPassword());
+            String hashedPassword = PasswordUtils.hashPassword(user.getPassword());
+            user.setPassword(hashedPassword);
+        }
+        
         return repo.update(user);
     }
 

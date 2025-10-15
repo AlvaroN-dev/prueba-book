@@ -59,6 +59,13 @@ public class MemberJdbcRepository implements IMemberRepository {
     private static final RowMapper<Member> MEMBER_MAPPER = rs -> {
         Member member = new Member(rs.getString("name"));
         member.setId(rs.getInt("id"));
+        
+        // Handle user_id (can be null)
+        int userId = rs.getInt("user_id");
+        if (!rs.wasNull()) {
+            member.setUserId(userId);
+        }
+        
         member.setActive(rs.getBoolean("active"));
         member.setDeleted(rs.getBoolean("deleted"));
         member.setRole(MemberRole.valueOf(rs.getString("role")));
@@ -74,15 +81,20 @@ public class MemberJdbcRepository implements IMemberRepository {
         // Validations
         ValidationUtils.validateName(member.getName());
 
-        String sql = "INSERT INTO member (name, active, deleted, role, access_level) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO member (user_id, name, active, deleted, role, access_level) VALUES (?, ?, ?, ?, ?, ?)";
         try {
             int rows = jdbc.update(sql, ps -> {
                 try {
-                    ps.setString(1, member.getName());
-                    ps.setBoolean(2, member.getActive() != null ? member.getActive() : true);
-                    ps.setBoolean(3, member.getDeleted() != null ? member.getDeleted() : false);
-                    ps.setString(4, member.getRole() != null ? member.getRole().name() : MemberRole.REGULAR.name());
-                    ps.setString(5, member.getAccessLevel() != null ? member.getAccessLevel().name() : AccessLevel.READ_WRITE.name());
+                    if (member.getUserId() != null) {
+                        ps.setInt(1, member.getUserId());
+                    } else {
+                        ps.setNull(1, java.sql.Types.INTEGER);
+                    }
+                    ps.setString(2, member.getName());
+                    ps.setBoolean(3, member.getActive() != null ? member.getActive() : true);
+                    ps.setBoolean(4, member.getDeleted() != null ? member.getDeleted() : false);
+                    ps.setString(5, member.getRole() != null ? member.getRole().name() : MemberRole.REGULAR.name());
+                    ps.setString(6, member.getAccessLevel() != null ? member.getAccessLevel().name() : AccessLevel.READ_WRITE.name());
                 } catch (SQLException e) {
                     throw new RuntimeException("Error creating member", e);
                 }
@@ -91,14 +103,20 @@ public class MemberJdbcRepository implements IMemberRepository {
                 throw new DatabaseException("Failed to create member");
             }
 
-            // Fetch the created member by searching for the last inserted ID
-            // Since we don't have name uniqueness, we'll search by name and take the most recent
-            List<Member> members = findByName(member.getName());
-            if (members.isEmpty()) {
-                throw new DatabaseException("Failed to retrieve created member");
+            // If user_id is provided, fetch by user_id, otherwise fetch by name
+            if (member.getUserId() != null) {
+                return findByUserId(member.getUserId())
+                    .orElseThrow(() -> new DatabaseException("Failed to retrieve created member"));
+            } else {
+                // Fetch the created member by searching for the last inserted ID
+                // Since we don't have name uniqueness, we'll search by name and take the most recent
+                List<Member> members = findByName(member.getName());
+                if (members.isEmpty()) {
+                    throw new DatabaseException("Failed to retrieve created member");
+                }
+                // Return the one with the highest ID (most recent)
+                return members.stream().max((m1, m2) -> m1.getId().compareTo(m2.getId())).get();
             }
-            // Return the one with the highest ID (most recent)
-            return members.stream().max((m1, m2) -> m1.getId().compareTo(m2.getId())).get();
         } catch (DatabaseException e) {
             logger.log(Level.SEVERE, "Error creating member", e);
             throw e;
@@ -145,6 +163,29 @@ public class MemberJdbcRepository implements IMemberRepository {
             return members.isEmpty() ? Optional.empty() : Optional.of(members.get(0));
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error finding member by id", e);
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Finds a member by user ID.
+     * 
+     * @param userId the user ID to search for
+     * @return an Optional containing the member if found, or empty if not found
+     */
+    public Optional<Member> findByUserId(Integer userId) {
+        String sql = "SELECT * FROM member WHERE user_id = ?";
+        try {
+            List<Member> members = jdbc.query(sql, ps -> {
+                try {
+                    ps.setInt(1, userId);
+                } catch (SQLException e) {
+                    throw new RuntimeException("Error setting parameters", e);
+                }
+            }, MEMBER_MAPPER);
+            return members.isEmpty() ? Optional.empty() : Optional.of(members.get(0));
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error finding member by user id", e);
             return Optional.empty();
         }
     }

@@ -58,9 +58,16 @@ public class MemberDashboardController {
     private void setupMyLoansTable() {
         if (myLoansTable != null) {
             myLoansTable.getColumns().clear();
-            TableColumn<String, String> loanCol = new TableColumn<>("Mis Préstamos");
-            loanCol.setCellValueFactory(new PropertyValueFactory<>("value"));
-            myLoansTable.getColumns().add(loanCol);
+            // TODO: Implement proper loan table columns when loan history is needed
+            // For now, show a simple message column
+            TableColumn<String, String> messageCol = new TableColumn<>("My Loans");
+            messageCol.setPrefWidth(800);
+            messageCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue()));
+            myLoansTable.getColumns().add(messageCol);
+            
+            // Add placeholder message
+            myLoansTable.getItems().clear();
+            myLoansTable.getItems().add("Your loan history will appear here");
         }
     }
     

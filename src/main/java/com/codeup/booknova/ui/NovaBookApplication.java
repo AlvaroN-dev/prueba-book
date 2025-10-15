@@ -1,5 +1,9 @@
 package com.codeup.booknova.ui;
 
+import com.codeup.booknova.domain.User;
+import com.codeup.booknova.ui.controller.AdminDashboardController;
+import com.codeup.booknova.ui.controller.MemberDashboardController;
+import com.codeup.booknova.ui.controller.UserDashboardController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -50,7 +54,7 @@ public class NovaBookApplication extends Application {
         }
     }
     
-    public static void showDashboard(String userType, String username) {
+    public static void showDashboard(String userType, User user) {
         try {
             String fxmlFile = switch (userType.toLowerCase()) {
                 case "admin" -> "/fxml/admin-dashboard.fxml";
@@ -62,8 +66,21 @@ public class NovaBookApplication extends Application {
             Scene scene = new Scene(loader.load(), 900, 600);
             scene.getStylesheets().add(NovaBookApplication.class.getResource("/styles/application.css").toExternalForm());
             
+            // Pass user object to the controller
+            Object controller = loader.getController();
+            if (controller instanceof UserDashboardController userController) {
+                userController.setCurrentUser(user);
+                
+                // Check if user has an associated member record and set member ID
+                userController.loadMembershipStatus();
+            } else if (controller instanceof AdminDashboardController adminController) {
+                adminController.setCurrentAdminId(user.getId());
+            } else if (controller instanceof MemberDashboardController) {
+                // Set member-specific data if needed in the future
+            }
+            
             primaryStage.setScene(scene);
-            primaryStage.setTitle("NovaBook - Dashboard " + userType + " (" + username + ")");
+            primaryStage.setTitle("NovaBook - Dashboard " + userType + " (" + user.getName() + ")");
         } catch (Exception e) {
             e.printStackTrace();
         }

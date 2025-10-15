@@ -1,0 +1,531 @@
+@startuml NovaBook Class Diagram
+
+' ==================== ESTILOS ====================
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #F8F9FA
+skinparam roundcorner 10
+skinparam shadowing false
+
+skinparam class {
+    BackgroundColor<<entity>> #E3F2FD
+    BorderColor<<entity>> #1976D2
+    BackgroundColor<<enum>> #FFF3E0
+    BorderColor<<enum>> #F57C00
+    BackgroundColor<<service>> #E8F5E9
+    BorderColor<<service>> #388E3C
+    BackgroundColor<<repository>> #F3E5F5
+    BorderColor<<repository>> #7B1FA2
+    BackgroundColor<<util>> #FFEBEE
+    BorderColor<<util>> #C62828
+    BackgroundColor<<infra>> #E0F2F1
+    BorderColor<<infra>> #00796B
+    BackgroundColor<<exception>> #FFCDD2
+    BorderColor<<exception>> #D32F2F
+}
+
+' ==================== ENTIDADES DE DOMINIO ====================
+package "Domain Layer" <<Rectangle>> {
+    
+    class Book <<entity>> {
+        - Integer id
+        - String isbn
+        - String title
+        - String author
+        - Integer stock
+        - Instant createdAt
+        - Instant updatedAt
+        --
+        + Book()
+        + Book(isbn, title, author, stock)
+        + isAvailable(): boolean
+        + lendOut(): void
+        + returnBook(): void
+        + getId(): Integer
+        + setId(id): void
+        + getIsbn(): String
+        + setIsbn(isbn): void
+        + getTitle(): String
+        + setTitle(title): void
+        + getAuthor(): String
+        + setAuthor(author): void
+        + getStock(): Integer
+        + setStock(stock): void
+        + toString(): String
+    }
+    
+    class User <<entity>> {
+        - Integer id
+        - String name
+        - String email
+        - String password
+        - String phone
+        - UserRole role
+        - AccessLevel accessLevel
+        - Boolean active
+        - Boolean deleted
+        - Instant createdAt
+        - Instant updatedAt
+        --
+        + User()
+        + User(name, email, password, phone)
+        + canAccess(): boolean
+        + activate(): void
+        + deactivate(): void
+        + softDelete(): void
+        + getId(): Integer
+        + setId(id): void
+        + getName(): String
+        + setName(name): void
+        + getEmail(): String
+        + setEmail(email): void
+        + getPassword(): String
+        + setPassword(password): void
+        + getPhone(): String
+        + setPhone(phone): void
+        + getRole(): UserRole
+        + setRole(role): void
+        + getAccessLevel(): AccessLevel
+        + setAccessLevel(accessLevel): void
+        + isActive(): Boolean
+        + setActive(active): void
+        + isDeleted(): Boolean
+        + setDeleted(deleted): void
+        + toString(): String
+    }
+    
+    class Member <<entity>> {
+        - Integer id
+        - String name
+        - Boolean active
+        - Boolean deleted
+        - MemberRole role
+        - AccessLevel accessLevel
+        - Instant createdAt
+        - Instant updatedAt
+        --
+        + Member()
+        + Member(name)
+        + canBorrow(): boolean
+        + getId(): Integer
+        + setId(id): void
+        + getName(): String
+        + setName(name): void
+        + isActive(): Boolean
+        + setActive(active): void
+        + isDeleted(): Boolean
+        + setDeleted(deleted): void
+        + getRole(): MemberRole
+        + setRole(role): void
+        + getAccessLevel(): AccessLevel
+        + setAccessLevel(accessLevel): void
+        + toString(): String
+    }
+    
+    class Loan <<entity>> {
+        - Integer id
+        - Integer memberId
+        - Integer bookId
+        - LocalDate dateLoaned
+        - LocalDate dateDue
+        - Boolean returned
+        - LocalDate returnDate
+        - Instant createdAt
+        - Instant updatedAt
+        --
+        + Loan()
+        + Loan(memberId, bookId, dateLoaned, dateDue)
+        + isOverdue(): boolean
+        + markAsReturned(): void
+        + extend(days): void
+        + getId(): Integer
+        + setId(id): void
+        + getMemberId(): Integer
+        + setMemberId(memberId): void
+        + getBookId(): Integer
+        + setBookId(bookId): void
+        + getDateLoaned(): LocalDate
+        + setDateLoaned(dateLoaned): void
+        + getDateDue(): LocalDate
+        + setDateDue(dateDue): void
+        + isReturned(): Boolean
+        + setReturned(returned): void
+        + getReturnDate(): LocalDate
+        + setReturnDate(returnDate): void
+        + toString(): String
+    }
+    
+    enum UserRole <<enum>> {
+        USER
+        ADMIN
+    }
+    
+    enum MemberRole <<enum>> {
+        REGULAR
+        PREMIUM
+    }
+    
+    enum AccessLevel <<enum>> {
+        READ_ONLY
+        READ_WRITE
+        MANAGE
+    }
+}
+
+' ==================== CAPA DE REPOSITORIO ====================
+package "Repository Layer" <<Rectangle>> {
+    
+    interface IBookRepository <<repository>> {
+        + create(book): Book
+        + update(book): Book
+        + findById(id): Optional<Book>
+        + findByIsbn(isbn): Optional<Book>
+        + findByTitle(title): List<Book>
+        + findByAuthor(author): List<Book>
+        + findAvailableBooks(): List<Book>
+        + findAll(): List<Book>
+        + existsByIsbn(isbn): boolean
+        + updateStock(bookId, newStock): int
+        + delete(id): boolean
+    }
+    
+    interface IUserRepository <<repository>> {
+        + create(user): User
+        + update(user): User
+        + updateByEmail(user, email): int
+        + findById(id): Optional<User>
+        + findByEmail(email): Optional<User>
+        + findActiveByEmail(email): Optional<User>
+        + findAll(): List<User>
+        + findAllActive(): List<User>
+        + existsByEmail(email): boolean
+        + softDelete(id): boolean
+    }
+    
+    interface IMemberRepository <<repository>> {
+        + create(member): Member
+        + update(member): Member
+        + findById(id): Optional<Member>
+        + findByName(name): List<Member>
+        + findActiveById(id): Optional<Member>
+        + findAll(): List<Member>
+        + findAllActive(): List<Member>
+        + canMemberBorrow(memberId): boolean
+        + softDelete(id): boolean
+    }
+    
+    interface ILoanRepository <<repository>> {
+        + create(loan): Loan
+        + update(loan): Loan
+        + findById(id): Optional<Loan>
+        + findByMemberId(memberId): List<Loan>
+        + findByBookId(bookId): List<Loan>
+        + findActiveLoansByMemberId(memberId): List<Loan>
+        + findActiveLoansByBookId(bookId): List<Loan>
+        + findOverdueLoans(): List<Loan>
+        + findLoansDueByDate(date): List<Loan>
+        + findAll(): List<Loan>
+        + countActiveLoansByMemberId(memberId): int
+        + existsActiveLoan(memberId, bookId): boolean
+    }
+    
+    class BookJdbcRepository <<repository>> {
+        - JdbcTemplateLight jdbc
+        - RowMapper<Book> bookMapper
+        --
+        + BookJdbcRepository(jdbc)
+        {method implementations}
+    }
+    
+    class UserJdbcRepository <<repository>> {
+        - JdbcTemplateLight jdbc
+        - RowMapper<User> userMapper
+        --
+        + UserJdbcRepository(jdbc)
+        {method implementations}
+    }
+    
+    class MemberJdbcRepository <<repository>> {
+        - JdbcTemplateLight jdbc
+        - RowMapper<Member> memberMapper
+        --
+        + MemberJdbcRepository(jdbc)
+        {method implementations}
+    }
+    
+    class LoanJdbcRepository <<repository>> {
+        - JdbcTemplateLight jdbc
+        - RowMapper<Loan> loanMapper
+        --
+        + LoanJdbcRepository(jdbc)
+        {method implementations}
+    }
+}
+
+' ==================== CAPA DE SERVICIO ====================
+package "Service Layer" <<Rectangle>> {
+    
+    interface IBookService <<service>> {
+        + addBook(isbn, title, author, stock): Book
+        + updateBook(book): Book
+        + findBookById(id): Optional<Book>
+        + findBookByIsbn(isbn): Optional<Book>
+        + searchBooksByTitle(title): List<Book>
+        + searchBooksByAuthor(author): List<Book>
+        + getAllBooks(): List<Book>
+        + getAvailableBooks(): List<Book>
+        + isBookAvailable(bookId): boolean
+        + increaseStock(bookId, quantity): void
+        + decreaseStock(bookId, quantity): void
+        + deleteBook(id): boolean
+    }
+    
+    interface IUserService <<service>> {
+        + register(name, email, password, phone): void
+        + adminRegister(name, email, password, phone, role, accessLevel): void
+        + updateUser(user): User
+        + updateUserByEmail(user, email): int
+        + findUserById(id): Optional<User>
+        + findUserByEmail(email): Optional<User>
+        + authenticate(email, password): Optional<User>
+        + getAllUsers(): List<User>
+        + getAllActiveUsers(): List<User>
+        + deactivateUser(id): boolean
+        + deleteUser(id): boolean
+        + userExists(email): boolean
+    }
+    
+    interface IMemberService <<service>> {
+        + registerMember(name): Member
+        + registerMemberWithRole(name, role, accessLevel): Member
+        + updateMember(member): Member
+        + findMemberById(id): Optional<Member>
+        + searchMembersByName(name): List<Member>
+        + getAllMembers(): List<Member>
+        + getAllActiveMembers(): List<Member>
+        + isMemberEligibleToBorrow(memberId): boolean
+        + deactivateMember(id): boolean
+        + deleteMember(id): boolean
+    }
+    
+    interface ILoanService <<service>> {
+        + createLoan(memberId, bookId, loanPeriodDays): Loan
+        + createLoan(memberId, bookId): Loan
+        + returnBook(loanId): void
+        + returnBook(memberId, bookId): void
+        + extendLoan(loanId, additionalDays): void
+        + findLoanById(id): Optional<Loan>
+        + findLoansByMember(memberId): List<Loan>
+        + findLoansByBook(bookId): List<Loan>
+        + findActiveLoansByMember(memberId): List<Loan>
+        + findOverdueLoans(): List<Loan>
+        + getAllLoans(): List<Loan>
+        + getLoanHistory(memberId): List<Loan>
+    }
+    
+    class BookService <<service>> {
+        - IBookRepository bookRepository
+        --
+        + BookService(bookRepository)
+        {method implementations}
+    }
+    
+    class UserService <<service>> {
+        - IUserRepository userRepository
+        --
+        + UserService(userRepository)
+        {method implementations}
+    }
+    
+    class MemberService <<service>> {
+        - IMemberRepository memberRepository
+        --
+        + MemberService(memberRepository)
+        {method implementations}
+    }
+    
+    class LoanService <<service>> {
+        - ILoanRepository loanRepository
+        - IBookRepository bookRepository
+        - IMemberRepository memberRepository
+        --
+        + LoanService(loanRepository, bookRepository, memberRepository)
+        {method implementations}
+    }
+}
+
+' ==================== CAPA DE INFRAESTRUCTURA ====================
+package "Infrastructure Layer" <<Rectangle>> {
+    
+    class ConnectionFactory <<infra>> {
+        - AppConfig cfg
+        --
+        + ConnectionFactory(cfg)
+        + open(): Connection
+    }
+    
+    class JdbcTemplateLight <<infra>> {
+        - ConnectionFactory factory
+        --
+        + JdbcTemplateLight(factory)
+        + query(sql, binder, mapper): List<T>
+        + queryForObject(sql, binder, mapper): Optional<T>
+        + update(sql, binder): int
+        + execute(sql): boolean
+    }
+    
+    interface RowMapper<T> <<infra>> {
+        + map(rs): T
+    }
+    
+    class AppConfig <<infra>> {
+        - Properties props
+        --
+        + AppConfig()
+        + get(key): String
+    }
+}
+
+' ==================== CAPA DE UTILIDADES ====================
+package "Utility Layer" <<Rectangle>> {
+    
+    class PasswordUtils <<util>> {
+        {static} + hashPassword(plainPassword): String
+        {static} + checkPassword(plainPassword, hashedPassword): boolean
+    }
+    
+    class ValidationUtils <<util>> {
+        {static} + validateUser(name, email, password, phone): void
+        {static} + validateName(name): void
+        {static} + validateEmail(email): void
+        {static} + validatePassword(password): void
+        {static} + validatePhone(phone): void
+        {static} + validateBook(isbn, title, author, stock): void
+        {static} + validateIsbn(isbn): void
+        {static} + validateMember(name): void
+        {static} + validateLoan(memberId, bookId, dateLoaned, dateDue): void
+    }
+    
+    class CsvExporter <<util>> {
+        {static} + exportBooks(books, filePath): void
+        {static} + exportMembers(members, filePath): void
+        {static} + exportLoans(loans, filePath): void
+    }
+}
+
+' ==================== EXCEPCIONES ====================
+package "Exception Layer" <<Rectangle>> {
+    
+    class DatabaseException <<exception>> {
+        + DatabaseException(message)
+        + DatabaseException(message, cause)
+    }
+    
+    class RuntimeException {
+    }
+}
+
+' ==================== RELACIONES - DOMINIO ====================
+User --> UserRole : uses
+User --> AccessLevel : uses
+Member --> MemberRole : uses
+Member --> AccessLevel : uses
+Loan --> Member : references (memberId)
+Loan --> Book : references (bookId)
+
+' ==================== RELACIONES - REPOSITORIO ====================
+IBookRepository <|.. BookJdbcRepository : implements
+IUserRepository <|.. UserJdbcRepository : implements
+IMemberRepository <|.. MemberJdbcRepository : implements
+ILoanRepository <|.. LoanJdbcRepository : implements
+
+BookJdbcRepository --> JdbcTemplateLight : uses
+UserJdbcRepository --> JdbcTemplateLight : uses
+MemberJdbcRepository --> JdbcTemplateLight : uses
+LoanJdbcRepository --> JdbcTemplateLight : uses
+
+BookJdbcRepository ..> Book : manages
+UserJdbcRepository ..> User : manages
+MemberJdbcRepository ..> Member : manages
+LoanJdbcRepository ..> Loan : manages
+
+BookJdbcRepository ..> RowMapper : uses
+UserJdbcRepository ..> RowMapper : uses
+MemberJdbcRepository ..> RowMapper : uses
+LoanJdbcRepository ..> RowMapper : uses
+
+' ==================== RELACIONES - SERVICIO ====================
+IBookService <|.. BookService : implements
+IUserService <|.. UserService : implements
+IMemberService <|.. MemberService : implements
+ILoanService <|.. LoanService : implements
+
+BookService --> IBookRepository : uses
+UserService --> IUserRepository : uses
+MemberService --> IMemberRepository : uses
+LoanService --> ILoanRepository : uses
+LoanService --> IBookRepository : uses
+LoanService --> IMemberRepository : uses
+
+BookService ..> Book : manages
+UserService ..> User : manages
+MemberService ..> Member : manages
+LoanService ..> Loan : manages
+
+UserService --> ValidationUtils : validates
+UserService --> PasswordUtils : encrypts
+MemberService --> ValidationUtils : validates
+BookService --> ValidationUtils : validates
+LoanService --> ValidationUtils : validates
+
+' ==================== RELACIONES - INFRAESTRUCTURA ====================
+JdbcTemplateLight --> ConnectionFactory : uses
+ConnectionFactory --> AppConfig : uses
+
+' ==================== RELACIONES - EXCEPCIONES ====================
+DatabaseException --|> RuntimeException : extends
+IBookRepository ..> DatabaseException : throws
+IUserRepository ..> DatabaseException : throws
+IMemberRepository ..> DatabaseException : throws
+ILoanRepository ..> DatabaseException : throws
+IBookService ..> DatabaseException : throws
+IUserService ..> DatabaseException : throws
+IMemberService ..> DatabaseException : throws
+ILoanService ..> DatabaseException : throws
+
+' ==================== NOTAS ====================
+note top of Book
+    Entidad principal que representa
+    un libro en el sistema de biblioteca
+    con gestión de inventario (stock)
+end note
+
+note top of User
+    Usuario del sistema con roles
+    (USER, ADMIN) y niveles de acceso
+    para la gestión de la aplicación
+end note
+
+note top of Member
+    Miembro de la biblioteca que puede
+    tomar libros prestados. Roles:
+    REGULAR y PREMIUM
+end note
+
+note top of Loan
+    Representa un préstamo de libro
+    con seguimiento de fechas y
+    estado de devolución
+end note
+
+note bottom of JdbcTemplateLight
+    Plantilla ligera de JDBC que simplifica
+    las operaciones de base de datos con
+    gestión automática de recursos
+end note
+
+note bottom of PasswordUtils
+    Utilidad para hash seguro de
+    contraseñas usando BCrypt
+end note
+
+@enduml

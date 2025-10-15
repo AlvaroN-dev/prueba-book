@@ -1,0 +1,124 @@
+@startuml NovaBook Use Case Simplified
+
+' ==================== CONFIGURACIÓN ====================
+skinparam actorStyle awesome
+skinparam backgroundColor #FAFAFA
+skinparam roundcorner 10
+skinparam shadowing false
+
+skinparam usecase {
+    BackgroundColor #E8F5E9
+    BorderColor #388E3C
+    ArrowColor #424242
+}
+
+skinparam actor {
+    BackgroundColor #FFF3E0
+    BorderColor #F57C00
+}
+
+title NovaBook - Casos de Uso Principales (Vista Simplificada)
+
+' ==================== ACTORES ====================
+left to right direction
+
+actor "Usuario\nInvitado" as Guest
+actor "Usuario\nRegistrado" as User
+actor "Miembro" as Member
+actor "Administrador" as Admin
+
+' ==================== SISTEMA ====================
+rectangle "Sistema NovaBook" {
+    
+    ' Autenticación
+    usecase "Registrarse" as UC01
+    usecase "Iniciar Sesión" as UC02
+    usecase "Gestionar Perfil" as UC03
+    
+    ' Catálogo
+    rectangle "Gestión de Libros" #E3F2FD {
+        usecase "Consultar Catálogo" as UC10
+        usecase "Buscar Libros" as UC11
+        usecase "Gestionar Libros\n(CRUD)" as UC12
+        usecase "Gestionar Stock" as UC13
+    }
+    
+    ' Miembros
+    rectangle "Gestión de Miembros" #F3E5F5 {
+        usecase "Registrar Miembro" as UC20
+        usecase "Gestionar Miembros\n(CRUD)" as UC21
+    }
+    
+    ' Préstamos
+    rectangle "Gestión de Préstamos" #FFF3E0 {
+        usecase "Crear Préstamo" as UC30
+        usecase "Devolver Libro" as UC31
+        usecase "Consultar Préstamos" as UC32
+        usecase "Ver Mis Préstamos" as UC33
+    }
+    
+    ' Reportes
+    rectangle "Reportes" #FFEBEE {
+        usecase "Exportar a CSV" as UC40
+        usecase "Ver Estadísticas" as UC41
+    }
+}
+
+' ==================== RELACIONES ====================
+
+' Usuario Invitado
+Guest --> UC01
+Guest --> UC10
+Guest --> UC11
+
+' Usuario Registrado
+User --> UC02
+User --> UC03
+User --> UC10
+User --> UC11
+
+' Miembro (hereda de Usuario)
+User <|-- Member
+Member --> UC33
+
+' Administrador (hereda de Usuario)
+User <|-- Admin
+Admin --> UC12
+Admin --> UC13
+Admin --> UC20
+Admin --> UC21
+Admin --> UC30
+Admin --> UC31
+Admin --> UC32
+Admin --> UC40
+Admin --> UC41
+
+' Relaciones entre casos de uso
+UC30 ..> UC13 : <<include>>\nactualiza stock
+UC31 ..> UC13 : <<include>>\nactualiza stock
+
+' ==================== NOTAS ====================
+note right of Guest
+    • Solo consulta
+    • Puede registrarse
+end note
+
+note right of User
+    • Acceso autenticado
+    • Consulta catálogo
+    • Gestiona su perfil
+end note
+
+note right of Member
+    • Hereda de Usuario
+    • Puede tomar préstamos
+    • Ve su historial
+end note
+
+note right of Admin
+    • Hereda de Usuario
+    • Gestión completa
+    • Acceso a reportes
+end note
+
+@enduml

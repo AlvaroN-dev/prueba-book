@@ -53,7 +53,8 @@ public class LoginController {
                 
                 // Determine user type based on role
                 String userType = determineUserType(user);
-                NovaBookApplication.showDashboard(userType, user.getName());
+                // Pass the complete User object instead of just the name
+                NovaBookApplication.showDashboard(userType, user);
             } else {
                 showMessage("Incorrect email or password", "error");
             }
